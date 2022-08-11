@@ -1,11 +1,13 @@
 <template>
   <div class="home">
-    <h1>RESET</h1>
+    <card-form />
   </div>
 </template>
 
 <script>
+import CardForm from "@/components/CardForm.vue";
 export default {
   name: "HomeView",
+  components: { CardForm },
 };
 </script>

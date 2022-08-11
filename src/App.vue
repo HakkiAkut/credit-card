@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
     <router-view />
   </div>
 </template>
 
-<style></style>
+<style>
+body {
+  background-color: #86b6c9;
+}
+</style>
