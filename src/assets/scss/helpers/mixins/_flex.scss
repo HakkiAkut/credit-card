@@ -7,6 +7,6 @@
     align-items: $align;
   } 
   @if $justify != none {
-    flex-direction: $justify;
+    justify-content: $justify;
   } 
 }
