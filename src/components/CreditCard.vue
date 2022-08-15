@@ -161,7 +161,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$animation-duration: 1s;
+$animation-duration: 0.5s;
 $width: 580px;
 $height: 360px;
 .card {
