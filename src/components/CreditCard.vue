@@ -273,7 +273,7 @@ $height: 360px;
 .list-enter-active {
   transition: all 1s;
 }
-.list-enter/* .list-leave-active below version 2.1.8 */ {
+.list-enter {
   opacity: 0;
   transform: translateY(30px);
 }
