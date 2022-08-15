@@ -1,15 +1,6 @@
 <template>
-  <div class="card" @click="changeSide">
-    <div
-      class="card__side column card__side--front"
-      :class="
-        initial
-          ? 'card__side--initial'
-          : front
-          ? 'card__side--to-front'
-          : 'card__side--to-back'
-      "
-    >
+  <div class="card" :class="{ rotate: !rotate }" @click="changeSide">
+    <div class="card__side column card__side--front" v-if="front">
       <h2 class="card-title">CREDIT CARD</h2>
       <svg
         class="icon-chip"
@@ -54,18 +45,13 @@
       </div>
       <div class="cardholder-name">{{ holderName }}</div>
     </div>
-    <div
-      class="card__side column card__side--back"
-      :class="
-        initial ? '' : front ? 'card__side--to-back' : 'card__side--to-front'
-      "
-    >
-      <div class="ccv-line">
+    <div class="card__side column card__side--back" v-else>
+      <div class="cvv-line">
         <transition-group name="list" tag="p">
           <span
-            v-for="item in card.ccv"
+            v-for="item in card.cvv"
             v-bind:key="item"
-            class="ccv-line__text"
+            class="cvv-line__text"
           >
             {{ item }}
           </span>
@@ -79,39 +65,39 @@
 export default {
   name: "CreditCard",
   data: () => ({
-    initial: true,
+    rotate: true,
     front: true,
     card: {
       cardNumber: [],
       validThru: [],
       holderName: "",
-      ccv: [],
+      cvv: [],
     },
   }),
   props: {
     cardNumber: String,
     validThru: String,
     holderName: String,
-    ccv: String,
+    cvv: String,
     input: String,
   },
   mounted() {
     this.splitNum();
-    this.splitCcv();
+    this.splitCvv();
     this.splitValidThru();
   },
   watch: {
     cardNumber() {
       this.splitNum();
     },
-    ccv() {
-      this.splitCcv();
+    cvv() {
+      this.splitCvv();
     },
     validThru() {
       this.splitValidThru();
     },
     input() {
-      if (this.input != "ccv") {
+      if (this.input != "cvv") {
         this.changeDirection(true);
       } else {
         this.changeDirection(false);
@@ -121,11 +107,13 @@ export default {
   methods: {
     changeSide: function () {
       this.initial = false;
-      this.front = !this.front;
+      this.rotate = !this.rotate;
+      setTimeout(() => (this.front = this.rotate), 250);
     },
     changeDirection: function (direction) {
       this.initial = false;
-      this.front = direction;
+      this.rotate = direction;
+      setTimeout(() => (this.front = this.rotate), 250);
     },
     splitNum: function () {
       let list = this.cardNumber.split("");
@@ -137,14 +125,14 @@ export default {
       }
       this.card.cardNumber = list;
     },
-    splitCcv: function () {
-      let list = this.ccv.split("");
+    splitCvv: function () {
+      let list = this.cvv.split("");
       if (list.length < 3) {
         for (var i = list.length; i < 3; i++) {
           list.push("*");
         }
       }
-      this.card.ccv = list;
+      this.card.cvv = list;
     },
     splitValidThru: function () {
       let list = this.validThru.split("");
@@ -161,7 +149,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$animation-duration: 0.5s;
+$animation-duration: 1s;
 $width: 580px;
 $height: 360px;
 .card {
@@ -169,17 +157,20 @@ $height: 360px;
   width: $width;
   height: $height;
   border-radius: 20px;
+  transform-style: preserve-3d;
+  animation-fill-mode: forwards;
+  transition: transform 1s;
   &__side {
     padding: 30px 40px;
     border-radius: inherit;
     width: 100%;
     height: 100%;
     position: absolute;
-    transform-style: preserve-3d;
     animation-fill-mode: forwards;
-    animation-duration: $animation-duration;
+    backface-visibility: hidden;
     background-image: linear-gradient($blue, $blue-light);
     gap: 20px;
+
     .card-num {
       @include font($credit, $white, 24px);
       word-spacing: 5px;
@@ -213,6 +204,7 @@ $height: 360px;
     @at-root #{&}--back {
       position: relative;
       justify-content: center;
+      transform: rotateY(180deg);
       &:before {
         content: "";
         position: absolute;
@@ -222,7 +214,7 @@ $height: 360px;
         top: 30px;
         left: 0;
       }
-      .ccv-line {
+      .cvv-line {
         position: relative;
         width: 80%;
         height: 50px;
@@ -236,38 +228,10 @@ $height: 360px;
         }
       }
     }
-    @at-root #{&}--initial {
-      z-index: 1;
-    }
-    @at-root #{&}--to-back {
-      animation-name: rotateFrontToBack;
-    }
-    @at-root #{&}--to-front {
-      animation-duration: calc(2 * $animation-duration);
-      animation-name: rotateBackToFront;
-    }
   }
-  @keyframes rotateFrontToBack {
-    0% {
-      transform: rotateY(0deg);
-    }
-    100% {
-      transform: rotateY(90deg);
-      visibility: hidden;
-    }
-  }
-  @keyframes rotateBackToFront {
-    0% {
-      visibility: hidden;
-      transform: rotateY(270deg);
-    }
-    50% {
-      transform: rotateY(270deg);
-      visibility: visible;
-    }
-    100% {
-      transform: rotateY(360deg);
-    }
+  &.rotate {
+    transform: rotateY(180deg);
+    transition: transform 0.5s;
   }
 }
 .list-enter-active {

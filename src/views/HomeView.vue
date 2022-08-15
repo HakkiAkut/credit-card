@@ -5,7 +5,7 @@
       :cardNumber="form.cardNumber"
       :holderName="form.holderName"
       :validThru="form.validThru"
-      :ccv="form.ccv"
+      :cvv="form.cvv"
       :input="form.input"
     />
   </div>
@@ -23,7 +23,7 @@ export default {
       cardNumber: "",
       holderName: "",
       validThru: "",
-      ccv: "",
+      cvv: "",
       input: "",
     },
   }),

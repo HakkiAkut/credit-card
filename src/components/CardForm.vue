@@ -13,7 +13,8 @@
           type="text"
           placeholder="0000 0000 0000 0000"
           v-mask="'#### #### #### ####'"
-          @click="form.input = 'cardNumber'"
+          @focus="form.input = 'cardNumber'"
+          @focusout="form.input = ''"
         />
       </div>
       <div
@@ -28,7 +29,8 @@
           id="holder-name"
           type="text"
           placeholder="Your Name"
-          @click="form.input = 'holderName'"
+          @focus="form.input = 'holderName'"
+          @focusout="form.input = ''"
         />
       </div>
 
@@ -43,21 +45,23 @@
           type="text"
           placeholder="MM/YY"
           v-mask="'##/##'"
-          @click="form.input = 'validThru'"
+          @focus="form.input = 'validThru'"
+          @focusout="form.input = ''"
         />
       </div>
       <div
         class="card-input__item column"
-        :class="status($v.form.ccv, 'card-input__item--error')"
+        :class="status($v.form.cvv, 'card-input__item--error')"
       >
-        <label for="ccv">CCV</label>
+        <label for="cvv">CVV</label>
         <input
-          v-model="$v.form.ccv.$model"
-          id="ccv"
+          v-model="$v.form.cvv.$model"
+          id="cvv"
           type="text"
           placeholder="000"
           v-mask="'###'"
-          @click="form.input = 'ccv'"
+          @focus="form.input = 'cvv'"
+          @focusout="form.input = ''"
         />
       </div>
     </div>
@@ -74,7 +78,7 @@ export default {
       cardNumber: "",
       holderName: "",
       validThru: "",
-      ccv: "",
+      cvv: "",
       input: "",
     },
   }),
@@ -106,7 +110,7 @@ export default {
         required,
         minLength: minLength(5),
       },
-      ccv: {
+      cvv: {
         required,
         minLength: minLength(3),
       },
