@@ -1,7 +1,13 @@
 <template>
   <div class="home">
-    <card-form />
-    <credit-card />
+    <card-form v-model="form" />
+    <credit-card
+      :cardNumber="form.cardNumber"
+      :holderName="form.holderName"
+      :validThru="form.validThru"
+      :ccv="form.ccv"
+      :input="form.input"
+    />
   </div>
 </template>
 
@@ -12,6 +18,15 @@ export default {
   name: "HomeView",
   components: { CardForm, CreditCard },
   methods: {},
+  data: () => ({
+    form: {
+      cardNumber: "",
+      holderName: "",
+      validThru: "",
+      ccv: "",
+      input: "",
+    },
+  }),
 };
 </script>
 

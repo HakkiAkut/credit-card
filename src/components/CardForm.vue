@@ -4,54 +4,60 @@
     <div class="card-input">
       <div
         class="card-input__item column"
-        :class="status($v.cardNumber, 'card-input__item--error')"
+        :class="status($v.form.cardNumber, 'card-input__item--error')"
       >
         <label for="card-number">Card Number</label>
         <input
-          v-model="$v.cardNumber.$model"
+          v-model="$v.form.cardNumber.$model"
           id="card-number"
           type="text"
           placeholder="0000 0000 0000 0000"
           v-mask="'#### #### #### ####'"
+          @click="form.input = 'cardNumber'"
         />
       </div>
       <div
         class="card-input__item column"
-        :class="status($v.holderName, 'card-input__item--error')"
+        :class="status($v.form.holderName, 'card-input__item--error')"
       >
         <label for="holder-name">Cardholder Name</label>
         <input
-          v-model="$v.holderName.$model"
+          v-model="$v.form.holderName.$model"
+          oninput="this.value = this.value.toUpperCase()"
+          onkeydown="return /[a-zA-Z İÜĞIUÖı]/i.test(event.key)"
           id="holder-name"
           type="text"
           placeholder="Your Name"
+          @click="form.input = 'holderName'"
         />
       </div>
 
       <div
         class="card-input__item column"
-        :class="status($v.validThru, 'card-input__item--error')"
+        :class="status($v.form.validThru, 'card-input__item--error')"
       >
         <label for="valid-thru">Valid Thru</label>
         <input
-          v-model="$v.validThru.$model"
+          v-model="$v.form.validThru.$model"
           id="valid-thru"
           type="text"
           placeholder="MM/YY"
           v-mask="'##/##'"
+          @click="form.input = 'validThru'"
         />
       </div>
       <div
         class="card-input__item column"
-        :class="status($v.ccv, 'card-input__item--error')"
+        :class="status($v.form.ccv, 'card-input__item--error')"
       >
         <label for="ccv">CCV</label>
         <input
-          v-model="$v.ccv.$model"
+          v-model="$v.form.ccv.$model"
           id="ccv"
           type="text"
           placeholder="000"
           v-mask="'###'"
+          @click="form.input = 'ccv'"
         />
       </div>
     </div>
@@ -64,32 +70,52 @@ import { required, minLength } from "vuelidate/lib/validators";
 export default {
   name: "CardForm",
   data: () => ({
-    cardNumber: "",
-    holderName: "",
-    validThru: "",
-    ccv: "",
+    form: {
+      cardNumber: "",
+      holderName: "",
+      validThru: "",
+      ccv: "",
+      input: "",
+    },
   }),
+  props: {
+    value: {
+      type: Object,
+      default: () => ({}),
+      required: true,
+    },
+  },
+  created() {
+    this.form = this.value;
+  },
+  watch: {
+    form() {
+      this.$emit("input", this.form);
+    },
+  },
   validations: {
-    cardNumber: {
-      required,
-      minLength: minLength(19),
-    },
-    holderName: {
-      required,
-    },
-    validThru: {
-      required,
-      minLength: minLength(5),
-    },
-    ccv: {
-      required,
-      minLength: minLength(3),
+    form: {
+      cardNumber: {
+        required,
+        minLength: minLength(19),
+      },
+      holderName: {
+        required,
+      },
+      validThru: {
+        required,
+        minLength: minLength(5),
+      },
+      ccv: {
+        required,
+        minLength: minLength(3),
+      },
     },
   },
   methods: {
     submitForm: function () {
       this.$v.$touch();
-      if (this.$v.$invalid) {
+      if (this.$v.form.$invalid) {
         return;
       }
       alert("SUCCESS!!");

@@ -29,12 +29,30 @@
           />
         </g>
       </svg>
-      <p class="card-num">1234 5566 7788 9999</p>
+
+      <transition-group name="list" tag="p">
+        <span
+          v-for="item in card.cardNumber"
+          v-bind:key="item"
+          class="card-num"
+        >
+          {{ item == " " ? "&nbsp;" : item }}
+        </span>
+      </transition-group>
+
       <div class="card-valid column">
         <p class="card-valid__text">Valid Thru</p>
-        <p class="card-valid__text card-valid__text--num">11/26</p>
+        <transition-group name="list" tag="p">
+          <span
+            v-for="item in card.validThru"
+            v-bind:key="item"
+            class="card-valid__text card-valid__text--num"
+          >
+            {{ item }}
+          </span>
+        </transition-group>
       </div>
-      <div class="cardholder-name">HAKKI AKUT</div>
+      <div class="cardholder-name">{{ holderName }}</div>
     </div>
     <div
       class="card__side column card__side--back"
@@ -43,7 +61,15 @@
       "
     >
       <div class="ccv-line">
-        <p class="ccv-line__text">111</p>
+        <transition-group name="list" tag="p">
+          <span
+            v-for="item in card.ccv"
+            v-bind:key="item"
+            class="ccv-line__text"
+          >
+            {{ item }}
+          </span>
+        </transition-group>
       </div>
     </div>
   </div>
@@ -55,11 +81,80 @@ export default {
   data: () => ({
     initial: true,
     front: true,
+    card: {
+      cardNumber: [],
+      validThru: [],
+      holderName: "",
+      ccv: [],
+    },
   }),
+  props: {
+    cardNumber: String,
+    validThru: String,
+    holderName: String,
+    ccv: String,
+    input: String,
+  },
+  mounted() {
+    this.splitNum();
+    this.splitCcv();
+    this.splitValidThru();
+  },
+  watch: {
+    cardNumber() {
+      this.splitNum();
+    },
+    ccv() {
+      this.splitCcv();
+    },
+    validThru() {
+      this.splitValidThru();
+    },
+    input() {
+      if (this.input != "ccv") {
+        this.changeDirection(true);
+      } else {
+        this.changeDirection(false);
+      }
+    },
+  },
   methods: {
     changeSide: function () {
       this.initial = false;
       this.front = !this.front;
+    },
+    changeDirection: function (direction) {
+      this.initial = false;
+      this.front = direction;
+    },
+    splitNum: function () {
+      let list = this.cardNumber.split("");
+      if (list.length < 19) {
+        for (var i = list.length; i < 19; i++) {
+          var el = (i + 1) % 5 == 0 ? " " : "*";
+          list.push(el);
+        }
+      }
+      this.card.cardNumber = list;
+    },
+    splitCcv: function () {
+      let list = this.ccv.split("");
+      if (list.length < 3) {
+        for (var i = list.length; i < 3; i++) {
+          list.push("*");
+        }
+      }
+      this.card.ccv = list;
+    },
+    splitValidThru: function () {
+      let list = this.validThru.split("");
+      if (list.length < 5) {
+        for (var i = list.length; i < 5; i++) {
+          var el = (i + 1) % 3 == 0 ? "/" : "*";
+          list.push(el);
+        }
+      }
+      this.card.validThru = list;
     },
   },
 };
@@ -89,6 +184,7 @@ $height: 360px;
       @include font($credit, $white, 24px);
       word-spacing: 5px;
       letter-spacing: 3px;
+      display: inline-block;
     }
     .card-valid {
       &__text {
@@ -173,5 +269,12 @@ $height: 360px;
       transform: rotateY(360deg);
     }
   }
+}
+.list-enter-active {
+  transition: all 1s;
+}
+.list-enter/* .list-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
 }
 </style>
