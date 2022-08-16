@@ -20,18 +20,18 @@
           />
         </g>
       </svg>
-
-      <transition-group name="list" tag="p">
-        <span
-          v-for="item in card.cardNumber"
-          v-bind:key="item"
-          class="card-num"
-        >
-          {{ item == " " ? "&nbsp;" : item }}
-        </span>
-      </transition-group>
-
-      <div class="card-valid column">
+      <div :class="{ focused: input == 'cardNumber' }">
+        <transition-group name="list" tag="p">
+          <span
+            v-for="item in card.cardNumber"
+            v-bind:key="item"
+            class="card-num"
+          >
+            {{ item == " " ? "&nbsp;" : item }}
+          </span>
+        </transition-group>
+      </div>
+      <div class="card-valid column" :class="{ focused: input == 'validThru' }">
         <p class="card-valid__text">Valid Thru</p>
         <transition-group name="list" tag="p">
           <span
@@ -43,10 +43,12 @@
           </span>
         </transition-group>
       </div>
-      <div class="cardholder-name">{{ holderName }}</div>
+      <div class="cardholder-name" :class="{ focused: input == 'holderName' }">
+        {{ holderName != "" ? holderName : "YOUR NAME" }}
+      </div>
     </div>
     <div class="card__side column card__side--back" v-else>
-      <div class="cvv-line">
+      <div class="cvv-line" :class="{ focused: input == 'cvv' }">
         <transition-group name="list" tag="p">
           <span
             v-for="item in card.cvv"
@@ -171,13 +173,21 @@ $height: 360px;
     background-image: linear-gradient($blue, $blue-light);
     gap: 20px;
 
+    .focused {
+      border: 2px solid #c5e679;
+      border-radius: 10px;
+    }
+
     .card-num {
       @include font($credit, $white, 24px);
       word-spacing: 5px;
       letter-spacing: 3px;
       display: inline-block;
+      align-items: center;
+      padding: 6px 0 2px;
     }
     .card-valid {
+      width: fit-content;
       &__text {
         @include font($inter, $grey, 14px);
         @at-root #{&}--num {
