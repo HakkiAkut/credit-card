@@ -32,7 +32,10 @@ export default {
 
 <style lang="scss">
 .home {
-  @include flex(row, center, center);
+  @include flex(column, center, center);
   gap: 25px;
+  @media (min-width: 1000px) {
+    @include flex(row, center, center);
+  }
 }
 </style>

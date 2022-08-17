@@ -156,7 +156,8 @@ $width: 580px;
 $height: 360px;
 .card {
   position: relative;
-  width: $width;
+  max-width: $width;
+  width: 100%;
   height: $height;
   border-radius: 20px;
   transform-style: preserve-3d;
